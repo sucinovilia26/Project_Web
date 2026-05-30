@@ -212,7 +212,7 @@ if(isset($_GET['hapus'])){
 
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="Gambar/logo.png" alt="Logo">
+            <img src="img/logo.png" alt="Logo">
             <h4>SR Outdoor</h4>
         </div>
         <div class="mt-3 flex-grow-1">

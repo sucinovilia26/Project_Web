@@ -177,7 +177,7 @@
     <nav class="navbar-custom">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center gap-3">
-                <img src="Gambar/logo.png" alt="Logo SR Outdoor" width="60">
+                <img src="img/logo.png" alt="Logo SR Outdoor" width="60">
                 <div class="brand-text">
                     <h1>SR OUTDOOR</h1>
                     <p>Siap Temani Setiap Pendakianmu</p>
