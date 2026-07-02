@@ -1,5 +1,5 @@
 <?php 
-include 'koneksi.php'; 
+include '../koneksi.php'; 
 
 // 1. Cek parameter ID di URL
 if(isset($_GET['id'])){
@@ -23,16 +23,16 @@ if(isset($_GET['id'])){
 if(isset($_POST['update'])){
     $name = $_POST['name'];
     $price = $_POST['price'];
-    $status = $_POST['status'];
+    $stok = $_POST['stok'];
     $image = $_FILES['image']['name'];
 
     if($image != ""){
         // Jika admin memilih gambar baru, upload gambar baru dan ganti data di DB
-        move_uploaded_file($_FILES['image']['tmp_name'], "img/".$image);
-        mysqli_query($conn, "UPDATE items SET name='$name', price='$price', status='$status', image='$image' WHERE id='$id'");
+        move_uploaded_file($_FILES['image']['tmp_name'], "../img/".$image);
+        mysqli_query($conn, "UPDATE items SET name='$name', price='$price', stok='$stok', image='$image' WHERE id='$id'");
     } else {
         // Jika tidak upload gambar baru, perbarui data teks saja (gambar lama tetap aman)
-        mysqli_query($conn, "UPDATE items SET name='$name', price='$price', status='$status' WHERE id='$id'");
+        mysqli_query($conn, "UPDATE items SET name='$name', price='$price', stok='$stok' WHERE id='$id'");
     }
 
     // Alihkan kembali ke admin.php setelah data sukses diperbarui
@@ -252,16 +252,16 @@ if(isset($_POST['update'])){
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select" required>
-                        <option value="available" <?= (isset($data['status']) && $data['status'] == 'available') ? 'selected' : ''; ?>>Tersedia (Available)</option>
-                        <option value="rented" <?= (isset($data['status']) && $data['status'] == 'rented') ? 'selected' : ''; ?>>Disewa (Rented)</option>
+                    <label class="form-label">stok</label>
+                    <select name="stok" class="form-select" required>
+                        <option value="available" <?= (isset($data['stok']) && $data['stok'] == 'available') ? 'selected' : ''; ?>>Tersedia (Available)</option>
+                        <option value="rented" <?= (isset($data['stok']) && $data['stok'] == 'rented') ? 'selected' : ''; ?>>Disewa (Rented)</option>
                     </select>
                 </div>
 
                 <div class="mb-4">
                     <label class="form-label d-block">Gambar Saat Ini</label>
-                    <img src="img/<?= htmlspecialchars($data['image']); ?>" class="current-img-preview" alt="Gambar Saat Ini">
+                    <img src="../img/<?= htmlspecialchars($data['image']); ?>" class="current-img-preview" alt="Gambar Saat Ini">
                 </div>
 
                 <div class="mb-5">

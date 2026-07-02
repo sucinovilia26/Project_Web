@@ -1,21 +1,20 @@
 <?php 
-include 'koneksi.php'; 
+include '../koneksi.php'; 
 
 // Proses Tambah Barang
 if(isset($_POST['tambah'])){
     $name = $_POST['name'];
     $price = $_POST['price'];
+    $stok = $_POST['stok']; // Ambil nilai stok dari input form
     $image = $_FILES['image']['name'];
 
-    // Pindahkan file gambar ke folder img/
     if($image != ""){
         move_uploaded_file($_FILES['image']['tmp_name'], "img/".$image);
     }
 
-    // Insert ke database (Sesuai dengan kode admin.php Anda sebelumnya)
-    mysqli_query($conn, "INSERT INTO items(name,price,image) VALUES('$name','$price','$image')");
+    // Tambahkan kolom stok ke dalam query INSERT
+    mysqli_query($conn, "INSERT INTO items(name,price,stok,image) VALUES('$name','$price','$stok','$image')");
 
-    // Refresh halaman agar data baru langsung muncul
     header("Location: admin.php");
     exit;
 }
@@ -212,19 +211,17 @@ if(isset($_GET['hapus'])){
 
     <div class="sidebar">
         <div class="sidebar-header">
-            <img src="img/logo.png" alt="Logo">
+            <img src="../img/logo.png" alt="Logo">
             <h4>SR Outdoor</h4>
         </div>
         <div class="mt-3 flex-grow-1">
-            <a href="#" class="nav-link">
-                <i class="fa-solid fa-chart-line"></i> Dashboard
-            </a>
             <a href="admin.php" class="nav-link active">
                 <i class="fa-solid fa-box-open"></i> Data Barang
             </a>
-            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#modalTambah">
-                <i class="fa-solid fa-plus-circle"></i> Tambah Barang
+            <a href="transaksi.php" class="nav-link">
+                <i class="fa-solid fa-clipboard-list"></i> Transaksi Sewa
             </a>
+            
         </div>
         <div class="mb-4">
             <a href="logout.php" class="nav-link text-danger">
@@ -250,7 +247,7 @@ if(isset($_GET['hapus'])){
                             <th>Gambar</th>
                             <th>Nama Barang</th>
                             <th>Harga/Hari</th>
-                            <th>Status</th>
+                            <th>Stok</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -266,20 +263,10 @@ if(isset($_GET['hapus'])){
                         <tr>
                             <td><?= $no++; ?></td>
                             <td>
-                                <img src="img/<?= $row['image']; ?>" class="img-item" alt="Gambar Alat">
+                                <img src="../img/<?= $row['image']; ?>" class="img-item" alt="Gambar Alat">
                             </td>
                             <td><strong style="color: var(--primary-green);"><?= $row['name']; ?></strong></td>
                             <td>Rp<?= number_format($row['price'], 0, ',', '.'); ?></td>
-                            <td>
-                                <?php 
-                                    // Logika status sederhana (Tersedia / Sedang Dipinjam)
-                                    if(isset($row['status']) && $row['status'] == 'rented') {
-                                        echo '<span class="text-danger fw-semibold">Disewa</span>';
-                                    } else {
-                                        echo '<span class="text-success fw-semibold">Tersedia</span>';
-                                    }
-                                ?>
-                            </td>
                             <td>
                                 <a href="edit.php?id=<?= $row['id']; ?>" class="action-link link-edit"><i class="fa-solid fa-pen"></i> Edit</a>
                                 <a href="admin.php?hapus=<?= $row['id']; ?>" class="action-link link-delete" onclick="return confirm('Apakah Anda yakin ingin menghapus barang ini?');">
@@ -317,6 +304,10 @@ if(isset($_GET['hapus'])){
                         <div class="mb-3">
                             <label class="form-label">Harga Sewa (Rp)</label>
                             <input type="number" name="price" class="form-control" placeholder="Contoh: 50000" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Stok Barang</label>
+                            <input type="number" name="stok" class="form-control" placeholder="Contoh: 10" min="0" required>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Upload Gambar Barang</label>

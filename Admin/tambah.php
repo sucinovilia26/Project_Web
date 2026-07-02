@@ -1,10 +1,10 @@
 <?php 
-include 'koneksi.php'; 
+include '../koneksi.php'; 
 
 if(isset($_POST['simpan'])){
     $name = $_POST['name'];
     $price = $_POST['price'];
-    $status = $_POST['status']; 
+    $stok = $_POST['stok']; 
     $image = $_FILES['image']['name'];
 
     // Pindahkan file gambar ke folder img/
@@ -13,7 +13,7 @@ if(isset($_POST['simpan'])){
     }
 
     // Insert ke database
-    mysqli_query($conn, "INSERT INTO items(name, price, status, image) VALUES('$name', '$price', '$status', '$image')");
+    mysqli_query($conn, "INSERT INTO items(name, price, stok, image) VALUES('$name', '$price', '$stok', '$image')");
 
     // Kembali ke halaman admin setelah berhasil
     header("Location: admin.php");
@@ -234,12 +234,13 @@ if(isset($_POST['simpan'])){
                     <input type="number" name="price" class="form-control" placeholder="Masukkan Harga" required>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Status</label>
-                    <select name="status" class="form-select" required>
-                        <option value="available">Tersedia (Available)</option>
-                        <option value="rented">Disewa (Rented)</option>
-                    </select>
+                <div class="mb-3">
+                    <label class="form-label">Harga Sewa (Rp)</label>
+                    <input type="number" name="price" class="form-control" placeholder="Contoh: 50000" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Stok Barang</label>
+                    <input type="number" name="stok" class="form-control" placeholder="Contoh: 10" min="0" required>
                 </div>
 
                 <div class="mb-5">

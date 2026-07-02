@@ -1,5 +1,5 @@
 <?php 
-include 'koneksi.php'; 
+include '../koneksi.php'; 
 
 $error = '';
 
@@ -134,7 +134,7 @@ if(isset($_POST['login'])){
 
     <div class="login-card text-center">
         <div class="logo-circle">
-            <img src="img/logo.png" alt="Logo SR Outdoor">
+            <img src="../img/logo.png" alt="Logo SR Outdoor">
         </div>
 
         <h2 class="login-title">Login Admin</h2>
@@ -158,7 +158,7 @@ if(isset($_POST['login'])){
             </button>
         </form>
 
-        <a href="index.php" class="back-link">Kembali Ke Beranda</a>
+        <a href="../index.php" class="back-link">Kembali Ke Beranda</a>
     </div>
 
 </body>

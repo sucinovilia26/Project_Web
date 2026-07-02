@@ -12,9 +12,9 @@
 
     <style>
         :root {
-            --primary-green: #2C5E3B; /* Hijau alam */
-            --accent-orange: #E89B27; /* Oranye senada dengan logo */
-            --bg-light: #F4F7F5; /* Putih keabu-abuan / natural */
+            --primary-green: #2C5E3B; 
+            --accent-orange: #E89B27; 
+            --bg-light: #F4F7F5; 
             --text-dark: #2D3748;
         }
 
@@ -100,12 +100,13 @@
         .section-title {
             font-weight: 600;
             color: var(--text-dark);
-            margin-bottom: 25px;
+            margin-bottom: 0;
             font-size: 22px;
             border-left: 4px solid var(--accent-orange);
             padding-left: 10px;
         }
 
+        /* Card Styling */
         .card-alat {
             border: none;
             border-radius: 15px;
@@ -113,7 +114,7 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             background: #ffffff;
-            height: 100%;
+            height: 100%; /* Memastikan tinggi kartu seragam */
         }
 
         .card-alat:hover {
@@ -128,47 +129,55 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 10px;
+            padding: 15px;
         }
 
         .card-img-wrapper img {
             max-height: 100%;
             max-width: 100%;
             object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+
+        .card-alat:hover .card-img-wrapper img {
+            transform: scale(1.05);
         }
 
         .alat-name {
             font-weight: 600;
             font-size: 16px;
             color: var(--primary-green);
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            line-height: 1.4;
         }
 
         .alat-price {
             color: #718096;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 500;
             margin-bottom: 15px;
-        }
-
-        .badge-tersedia {
-            background-color: white;
-            color: var(--primary-green);
-            border: 1px solid var(--primary-green);
-            padding: 6px 15px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 13px;
-            display: inline-block;
         }
 
         /* Footer */
         .footer {
             text-align: center;
             padding: 30px 0;
-            margin-top: 50px;
+            margin-top: 60px;
             color: #718096;
             font-size: 14px;
             border-top: 1px solid #E2E8F0;
+            background-color: #ffffff;
+        }
+        
+        /* Search Bar */
+        .search-btn {
+            background-color: var(--primary-green);
+            color: white;
+            border: none;
+        }
+        .search-btn:hover {
+            background-color: #1e4028;
+            color: white;
         }
     </style>
 </head>
@@ -184,8 +193,8 @@
                 </div>
             </div>
             <div>
-                <a href="login.php" class="btn-login-admin">
-                    <i class="fa-regular fa-circle-user"></i> Login
+                <a href="Admin/login.php" class="btn-login-admin">
+                    <i class="fa-regular fa-circle-user"></i> Login Admin
                 </a>
             </div>
         </div>
@@ -208,34 +217,71 @@
     </div>
 
     <div class="container mt-5">
-        <h3 class="section-title">Peralatan Tersedia</h3>
+        
+        <div class="row align-items-center mb-4">
+            <div class="col-md-6 mb-3 mb-md-0">
+                <h3 class="section-title">Katalog Peralatan</h3>
+            </div>
+            <div class="col-md-6">
+                <form action="index.php" method="GET" class="d-flex justify-content-md-end">
+                    <div class="input-group" style="max-width: 400px;">
+                        <input type="text" name="cari" class="form-control" placeholder="Cari nama tenda, sepatu, dll..." 
+                               value="<?= isset($_GET['cari']) ? htmlspecialchars($_GET['cari']) : ''; ?>">
+                        <button class="btn search-btn" type="submit">
+                            <i class="fa-solid fa-magnifying-glass"></i> Cari
+                        </button>
+                        
+                        <?php if(isset($_GET['cari']) && $_GET['cari'] != ''): ?>
+                            <a href="index.php" class="btn btn-outline-danger" title="Hapus Pencarian">
+                                <i class="fa-solid fa-xmark"></i>
+                            </a>
+                        <?php endif; ?>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <div class="row g-4">
-            
             <?php
-            // Mengambil data barang yang statusnya tersedia (atau semua barang jika Anda belum memfilter status di DB)
-            // Asumsi tabel items memiliki kolom: id, name, price, image, (status)
-            $query = mysqli_query($conn, "SELECT * FROM items ORDER BY id DESC LIMIT 8"); 
-            
-            // Cek apakah ada data
+            // Logika Pencarian
+            if(isset($_GET['cari']) && $_GET['cari'] != '') {
+                // Jika user menekan tombol cari, filter berdasarkan nama barang (LIKE)
+                $keyword = mysqli_real_escape_string($conn, $_GET['cari']);
+                $query = mysqli_query($conn, "SELECT * FROM items WHERE name LIKE '%$keyword%' ORDER BY id DESC");
+                
+                // Menampilkan informasi hasil pencarian
+                $jumlah_hasil = mysqli_num_rows($query);
+                echo "<div class='col-12 mb-2 text-muted'>Menampilkan <b>$jumlah_hasil</b> hasil pencarian untuk: <em>\"".htmlspecialchars($keyword)."\"</em></div>";
+            } else {
+                // Jika tidak ada pencarian, tampilkan semua barang seperti biasa
+                $query = mysqli_query($conn, "SELECT * FROM items ORDER BY id DESC"); 
+            }
+
+            // Loop untuk menampilkan kartu barang
             if(mysqli_num_rows($query) > 0) {
                 while($row = mysqli_fetch_assoc($query)):
             ?>
             <div class="col-6 col-md-4 col-lg-3">
-                <div class="card-alat">
+                <div class="card-alat d-flex flex-column">
                     <div class="card-img-wrapper">
-                        <img src="img/<?= $row['image']; ?>" alt="<?= $row['name']; ?>">
+                        <img src="img/<?= htmlspecialchars($row['image']); ?>" alt="<?= htmlspecialchars($row['name']); ?>">
                     </div>
-                    <div class="card-body text-center">
-                        <h5 class="alat-name"><?= $row['name']; ?></h5>
+                    <div class="card-body text-center d-flex flex-column p-3">
+                        <h5 class="alat-name"><?= htmlspecialchars($row['name']); ?></h5>
                         <p class="alat-price">Rp<?= number_format($row['price'], 0, ',', '.'); ?> / hari</p>
                         
-                        <?php 
-                        // Jika Anda memiliki kolom 'status' di tabel items, Anda bisa memodifikasi logika ini
-                        $status_label = isset($row['status']) && $row['status'] == 'rented' ? 'Sedang Disewa' : 'Tersedia';
-                        $status_color = isset($row['status']) && $row['status'] == 'rented' ? 'border-danger text-danger' : '';
-                        ?>
-                        <div class="badge-tersedia <?= $status_color ?>">
-                            <?= $status_label ?>
+                        <div class="mt-auto">
+                            <?php 
+                            if(isset($row['stok']) && $row['stok'] > 0) {
+                                echo "<div class='badge bg-success bg-opacity-10 text-success border border-success p-2 w-100 fw-semibold'>";
+                                echo "Tersedia (Sisa: " . $row['stok'] . ")";
+                                echo "</div>";
+                            } else {
+                                echo "<div class='badge bg-danger bg-opacity-10 text-danger border border-danger p-2 w-100 fw-semibold'>";
+                                echo "Stok Habis / Disewa";
+                                echo "</div>";
+                            }
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -243,19 +289,23 @@
             <?php 
                 endwhile; 
             } else {
-                echo '<div class="col-12 text-center text-muted py-5">Belum ada data peralatan.</div>';
+                // Tampilan jika barang yang dicari tidak ditemukan
+                echo '<div class="col-12 text-center text-muted py-5">
+                        <i class="fa-solid fa-magnifying-glass-minus fa-3x mb-3 text-secondary"></i>
+                        <br><h5 class="fw-semibold">Barang tidak ditemukan.</h5>
+                        <p>Coba gunakan kata kunci lain untuk mencari peralatan.</p>
+                      </div>';
             }
             ?>
-
         </div>
     </div>
 
     <div class="footer">
-        <div class="container">
-            &copy; 2026 SR Outdoor. All rights reserved
+        <div class="container fw-medium">
+            &copy; 2026 SR Outdoor. All rights reserved.
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.css"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
